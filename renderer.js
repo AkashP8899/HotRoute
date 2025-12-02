@@ -277,6 +277,49 @@ addLinkModal.addEventListener('click', (e) => {
     }
 });
 
+// Delete all links
+function deleteAllLinks() {
+    if (confirm('Are you sure you want to delete all links? This action cannot be undone.')) {
+        localStorage.removeItem('links');
+        renderLinks([]);
+    }
+}
+
+// Add event listener for delete all button
+document.getElementById('delete-all-btn').addEventListener('click', deleteAllLinks);
+
+// Dark mode functionality
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
+    
+    // Update the icon
+    const darkModeIcon = document.querySelector('#dark-mode-btn i');
+    if (darkModeIcon) {
+        darkModeIcon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+
+// Initialize dark mode from localStorage
+function initDarkMode() {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        const darkModeIcon = document.querySelector('#dark-mode-btn i');
+        if (darkModeIcon) darkModeIcon.className = 'fas fa-sun';
+    }
+}
+
+// Add event listener for dark mode button
+document.addEventListener('DOMContentLoaded', () => {
+    const darkModeBtn = document.getElementById('dark-mode-btn');
+    if (darkModeBtn) {
+        darkModeBtn.addEventListener('click', toggleDarkMode);
+    }
+    initDarkMode();
+});
+
 // Initialize the app
 function init() {
     const links = getLinks();
