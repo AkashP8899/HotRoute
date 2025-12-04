@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Menu } = require('electron');
 const path = require('path');
 const started = require('electron-squirrel-startup');
 
@@ -18,10 +18,35 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      devTools: false, // Disable DevTools
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      webgl: false,
+      enableRemoteModule: false
     },
     icon: path.join(__dirname, 'assets/icon.png')
   });
+
+  // Disable DevTools shortcut
+  mainWindow.webContents.on('devtools-opened', () => {
+    mainWindow.webContents.closeDevTools();
+  });
+
+  // Disable right-click context menu
+  mainWindow.webContents.on('context-menu', (e) => {
+    e.preventDefault();
+  });
+
+  // Prevent new window creation
+  mainWindow.webContents.setWindowOpenHandler(() => ({
+    action: 'deny',
+    overrideBrowserWindowOptions: {
+      webPreferences: {
+        devTools: false
+      }
+    }
+  }));
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
@@ -45,7 +70,43 @@ ipcMain.on('open-external', (event, url) => {
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.whenReady().then(createWindow);
+function createMenu() {
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        { role: 'quit' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click: async () => {
+            await shell.openExternal('https://electronjs.org')
+          }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+
+app.whenReady().then(() => {
+  createWindow();
+  createMenu();
+});
 
 // Quit when all windows are closed, except on macOS.
 app.on('window-all-closed', () => {

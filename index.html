@@ -1,7 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com data:; img-src 'self' data:;">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Hot Route</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -223,7 +230,7 @@
         #00ffff, #0000ff, #ff00ff, #ff0000
       );
       background-size: 300% 300%;
-      opacity: 0.3;
+      opacity: 0.5;  /* Increased from 0.3 to 0.6 for better visibility */
       z-index: -1;
       animation: rainbow 3s ease infinite;
       border-radius: 4px;
@@ -252,14 +259,18 @@
     }
     
     .delete-btn {
-      background-color: #fff5f5;
+      background-color: transparent;
       color: #e03131;
+    }
+    
+    .delete-btn:hover {
+      background-color: rgba(224, 49, 49, 0.1);
     }
     
     .search-container {
       padding: 0px 0px 0px 0px;
       background: rgb(28, 28, 28);
-      border-top: 1.5px solid #4CAF50;
+      border-top: 1.5px solid #c8c8c8;
       display: flex;
       gap: 0;
       align-items: stretch;
@@ -267,6 +278,7 @@
     }
     
     .search-container input {
+      border-bottom: none;
       flex: 1;
       padding: 4px 8px;
       border-right: none;

@@ -191,8 +191,8 @@ function renderLinks(links) {
             if (timeoutId) clearTimeout(timeoutId);
             
             if (e.currentTarget.textContent === url) {
-                // If already showing URL, open it
-                openLink(url);
+                // If already showing URL, just keep it displayed
+                // Don't open the URL automatically
             } else {
                 // Otherwise, show URL and set a timeout to revert
                 e.currentTarget.textContent = url;
