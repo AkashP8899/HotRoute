@@ -97,7 +97,16 @@
     }
     
     .action-btn {
-      padding: 4px 6px;
+      padding: 4px 8px;
+      background: none;
+      border: none;
+      color: #495057;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
       border: none;
       background: none;
       cursor: pointer;
@@ -123,6 +132,14 @@
     #delete-all-btn:hover {
       color: #e03131;
       background: #fff5f5;
+    }
+    
+    #export-btn:hover {
+      color: #228be6;
+    }
+    
+    #import-btn:hover {
+      color: #37b24d;
     }
     
     /* Dark mode styles */
@@ -364,6 +381,13 @@
     <button id="delete-all-btn" class="action-btn" title="Delete all links">
       <i class="fas fa-trash-alt"></i>
     </button>
+    <button id="export-btn" class="action-btn" title="Export links">
+      <i class="fas fa-file-export"></i>
+    </button>
+    <label for="import-btn" class="action-btn" title="Import links" style="margin: 0; cursor: pointer;">
+      <i class="fas fa-file-import"></i>
+      <input type="file" id="import-btn" accept=".json" style="display: none;">
+    </label>
     <button id="add-btn" class="add-btn">
       <i class="fas fa-plus"></i> Add
     </button>

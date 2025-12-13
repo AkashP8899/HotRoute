@@ -279,14 +279,95 @@ addLinkModal.addEventListener('click', (e) => {
 
 // Delete all links
 function deleteAllLinks() {
-    if (confirm('Are you sure you want to delete all links? This action cannot be undone.')) {
+    if (confirm('Are you sure you want to delete all links? This cannot be undone.')) {
         localStorage.removeItem('links');
         renderLinks([]);
+        showNotification('All links deleted', 'success');
     }
 }
 
-// Add event listener for delete all button
+// Export links to a JSON file
+function exportLinks() {
+    const links = getLinks();
+    if (links.length === 0) {
+        showNotification('No links to export', 'warning');
+        return;
+    }
+    
+    const data = JSON.stringify(links, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `hotroute-links-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showNotification('Links exported successfully', 'success');
+}
+
+// Import links from a JSON file
+function importLinks(file) {
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const importedLinks = JSON.parse(e.target.result);
+            if (!Array.isArray(importedLinks)) {
+                throw new Error('Invalid file format');
+            }
+            
+            // Validate each link
+            const validLinks = importedLinks.filter(link => 
+                link && 
+                typeof link === 'object' && 
+                'name' in link && 
+                'url' in link
+            );
+            
+            if (validLinks.length === 0) {
+                throw new Error('No valid links found in the file');
+            }
+            
+            // Merge with existing links, avoiding duplicates by URL
+            const existingLinks = getLinks();
+            const existingUrls = new Set(existingLinks.map(link => link.url));
+            const newLinks = validLinks.filter(link => !existingUrls.has(link.url));
+            
+            if (newLinks.length === 0) {
+                showNotification('All links already exist', 'info');
+                return;
+            }
+            
+            const updatedLinks = [...newLinks, ...existingLinks];
+            localStorage.setItem('links', JSON.stringify(updatedLinks));
+            renderLinks(updatedLinks);
+            showNotification(`Imported ${newLinks.length} new links`, 'success');
+            
+        } catch (error) {
+            console.error('Error importing links:', error);
+            showNotification('Error importing links: ' + error.message, 'error');
+        }
+    };
+    reader.onerror = () => {
+        showNotification('Error reading file', 'error');
+    };
+    reader.readAsText(file);
+}
+
+// Add event listeners for data management buttons
 document.getElementById('delete-all-btn').addEventListener('click', deleteAllLinks);
+document.getElementById('export-btn').addEventListener('click', exportLinks);
+document.getElementById('import-btn').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        importLinks(e.target.files[0]);
+        e.target.value = ''; // Reset file input
+    }
+});
 
 // Dark mode functionality
 function toggleDarkMode() {
