@@ -9,12 +9,6 @@ pipeline {
     }
     
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout code from SCM
-                checkout scm
-            }
-        }
         
         stage('Setup Node.js') {
             steps {
